@@ -7,13 +7,28 @@
 
 local dlib = {}
 
-dlib.ver = 1.0
+dlib.ver = 0.1
 
 -- basic useful crap
 
-function dlib.isEmpty(s) -- Check is something is empty.
+-- Dumb little empty checker.
+-- (i.e. 'isEmpty("")' would return true)
+function dlib.isEmpty(s)
 	return s == nil or s == ""
 end
+
+-- Print to the middle of the screen with
+-- an optional y offset.
+-- (i.e. 'cPrint("Hello, World!",10)')
+-- It should be noted that to opt-out of
+-- the offset, set it to '0'.
+function dlib.cPrint(sText, yOffset)
+	local w, h = term.getSize()
+    local x, y = term.getCursorPos()
+    term.setCursorPos(math.floor((w - #sText) / 2) + 1, y + yOffset)
+    print(sText)
+end
+
 
 dlib.type = {} -- dlib type stuff.
 
