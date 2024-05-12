@@ -7,7 +7,13 @@
 
 local dlib = {}
 
-dlib.ver = 0.1
+local ver = 0.1
+
+local oldError = error
+
+local function error(sText,func)
+	oldError("(dlib:"..func..") "..sText,0)
+end
 
 -- basic useful crap
 
@@ -17,11 +23,11 @@ function dlib.isEmpty(s)
 	return s == nil or s == ""
 end
 
--- Print to the middle of the screen with
--- an optional y offset.
--- (i.e. 'cPrint("Hello, World!",10)')
--- It should be noted that to opt-out of
--- the offset, set it to '0'.
+function dlib.getVersion()
+	return ver
+end
+
+-- Print to the middle of the screen with optional y offset.
 function dlib.cPrint(sText, yOffset)
 	local w, h = term.getSize()
     local x, y = term.getCursorPos()
@@ -29,15 +35,20 @@ function dlib.cPrint(sText, yOffset)
     print(sText)
 end
 
+-- Print text at the bottom of the screen.
+function dlib.bPrint(sText)
+	local cx,cy = term.getCursorPos()
+	local tx,ty = term.getSize()
 
-dlib.type = {} -- dlib type stuff.
-
-function dlib.type.compareTypes(thing1,thing2) -- Compare types of two things.
-	if type(thing1) ~= type(thing2) then
-		return false
-	elseif type(thing1) == type(thing2) then -- dumb and probably redundant, but it works. If it ain't broke, don't fix it.
-		return true
+	if dlib.isEmpty(sText) then
+		error("Cannot print nothing at the bottom.","bPrint")
+	elseif #sText > tx then
+		error("Length of text supplied ("..#sText..") exceeds term width ("..tx..")","bPrint")
 	end
+	
+	term.setCursorPos(1,ty)
+	write(sText)
+	term.setCursorPos(cx,cy)
 end
 
 dlib.math = {} -- Math functions.
@@ -45,7 +56,7 @@ dlib.math = {} -- Math functions.
 function dlib.math.isEven(number)
 	return number % 2 == 0
 end
---
+
 function dlib.math.isOdd(number)
 	return number % 2 ~= 0
 end
